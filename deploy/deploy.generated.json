@@ -9,6 +9,9 @@
     }
   },
   "parameters": {
+    "existingLogAnalyticsWorkspaceId": {
+      "value": "sudhirawloganalytics"
+    },
     "location": {
       "type": "string",
       "defaultValue": "[resourceGroup().location]",
@@ -103,6 +106,7 @@
           },
           "resources": [
             {
+              "condition": "[empty(parameters('existingLogAnalyticsWorkspaceId'))]",
               "type": "Microsoft.OperationalInsights/workspaces",
               "apiVersion": "2023-09-01",
               "name": "[format(parameters('uniqueNameFormat'), 'logs')]",
@@ -131,7 +135,7 @@
               "scope": "[format('Microsoft.Communication/communicationServices/{0}', format(parameters('uniqueNameFormat'), 'acs'))]",
               "name": "allLogsToLogAnalytics",
               "properties": {
-                "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', format(parameters('uniqueNameFormat'), 'logs'))]",
+                "workspaceId": "[if(empty(parameters('existingLogAnalyticsWorkspaceId')), resourceId('Microsoft.OperationalInsights/workspaces', format(parameters('uniqueNameFormat'), 'logs')), parameters('existingLogAnalyticsWorkspaceId'))]",
                 "logs": [
                   {
                     "categoryGroup": "allLogs",
@@ -167,7 +171,7 @@
               "scope": "[format('Microsoft.EventGrid/systemTopics/{0}', format(parameters('uniqueNameFormat'), 'eg-acs'))]",
               "name": "allLogsToLogAnalytics",
               "properties": {
-                "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', format(parameters('uniqueNameFormat'), 'logs'))]",
+                "workspaceId": "[if(empty(parameters('existingLogAnalyticsWorkspaceId')), resourceId('Microsoft.OperationalInsights/workspaces', format(parameters('uniqueNameFormat'), 'logs')), parameters('existingLogAnalyticsWorkspaceId'))]",
                 "logs": [
                   {
                     "categoryGroup": "allLogs",
@@ -201,7 +205,7 @@
               "scope": "[format('Microsoft.CognitiveServices/accounts/{0}', format(parameters('uniqueNameFormat'), 'aispeech'))]",
               "name": "allLogsToLogAnalytics",
               "properties": {
-                "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', format(parameters('uniqueNameFormat'), 'logs'))]",
+                "workspaceId": "[if(empty(parameters('existingLogAnalyticsWorkspaceId')), resourceId('Microsoft.OperationalInsights/workspaces', format(parameters('uniqueNameFormat'), 'logs')), parameters('existingLogAnalyticsWorkspaceId'))]",
                 "logs": [
                   {
                     "categoryGroup": "allLogs",
@@ -414,7 +418,7 @@
               "scope": "[format('Microsoft.Sql/servers/{0}/databases/{1}', format(parameters('uniqueNameFormat'), 'sql'), parameters('databaseName'))]",
               "name": "allLogsToLogAnalytics",
               "properties": {
-                "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsName'))]",
+                "workspaceId": "[if(empty(parameters('existingLogAnalyticsWorkspaceId')), resourceId('Microsoft.OperationalInsights/workspaces', format(parameters('uniqueNameFormat'), 'logs')), parameters('existingLogAnalyticsWorkspaceId'))]",
                 "logs": [
                   {
                     "categoryGroup": "allLogs",
@@ -509,7 +513,7 @@
               "scope": "[format('Microsoft.Web/sites/{0}', format(parameters('uniqueNameFormat'), 'backend'))]",
               "name": "allLogsToLogAnalytics",
               "properties": {
-                "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsName'))]",
+                "workspaceId": "[if(empty(parameters('existingLogAnalyticsWorkspaceId')), resourceId('Microsoft.OperationalInsights/workspaces', format(parameters('uniqueNameFormat'), 'logs')), parameters('existingLogAnalyticsWorkspaceId'))]",
                 "logs": [
                   {
                     "category": "AppServiceAntivirusScanAuditLogs",
